@@ -5,19 +5,32 @@
 /**
  *	Autor: Antonio Delgado Luque
  *	
- *	Fecha:
+ *	Fecha:22/10/2024
  *
- *	Título:
+ *	Título:Ejercicio 1 prácticas con cadenas de caracteres
  */
 
 int main() {
-	char str1[4]= "hola";
-	printf("%s\n",str1);//imprime el string entero
-
-	printf("%c\n",str1[3]);//imprime el caracter en la posición 3 (Empieza en el 0)
-
-	// str1[4]= '$'; 	// \0 es el indicador de final de string en C. Reemplazarlo es muy MALA idea
+	char str1[5];
+	int longitud;
+	char reemplazo;
 	
-	printf("%s\n",str1);
-return 0;
+	printf("Introduzca una palabra: \n");
+	
+	scanf("%s",str1);//recoge el valor de la cadena de caracteres
+	
+	printf("¿Qué longitud tiene la palabra? \n");
+	
+	scanf("%d",&longitud);//recoge la longitud
+	
+	printf("¿Con qué carácter quieres reemplazar ?");
+	
+	scanf(" %c",&reemplazo);//recoge el reemplazo de \0
+	
+	printf("Antes\n %s \n",str1);
+
+	str1[longitud]=reemplazo;//asignamos el reemplazo al valor de longitud para reemplazar \0 y ver que ocurre	
+	printf("Después\n %s \n",str1);
+	
+	return 0;
 }
