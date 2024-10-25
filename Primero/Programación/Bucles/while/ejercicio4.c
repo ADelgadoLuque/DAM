@@ -11,15 +11,14 @@
  */
 
 int main() {
-	int numero, suma = 0, digito;
+	int numero, contador = 0; 
 	printf("Introduce un número de al menos dos dígitos\n");
 	scanf("%d",&numero);
 	while (numero>0){
-		digito=numero%10;
-		suma+=digito;
+		contador++;
 		numero=numero/10;
 	
 	}
-	printf("%d\n",suma);
+	printf("%d\n",contador);
 	return 0;
 }

@@ -11,10 +11,15 @@
  */
 
 int main() {
-	int i=1;
-	while (i<=10){
-		printf("%d, ",i++);
+	int num=1;
+
+	while (num<=100){
+		num++;
+		if (num%3==0){
+		printf("%d \n",num);
+		}
+		
 	}
-	printf("\n");
+
 	return 0;
 }
