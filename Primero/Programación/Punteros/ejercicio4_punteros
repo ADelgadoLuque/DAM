@@ -1,0 +1,29 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+
+/**
+ *	Autor: Antonio Delgado Luque
+ *	
+ *	Fecha:
+ *
+ *	Título:
+ */
+void intercambio();
+void cambio(int *n1,int *n2){
+
+	intercambio(&n1,&n2,*n2,*n1);
+}
+
+void intercambio(int *a,int *b,int c,int d){
+
+	*a=c;
+	*b=d;
+}
+int main(){
+  int num1=10,num2=20;
+  printf("num1 %d, num2 %d\n",num1,num2);
+  cambio(&num1,&num2);
+  printf("num1 %d, num2 %d\n",num1,num2);
+  return 0;
+}
