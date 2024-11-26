@@ -25,7 +25,10 @@ void inicializar(estudiante * estudiante_a_rellenar, char * nombre, int edad, fl
 	//estudiante_a_rellenar.nombre=nombre; No funciona ya que iguala las direcciones de memoria y no el contenido de la string
 	estudiante_a_rellenar->edad=edad;
 	estudiante_a_rellenar->nota=nota;
-}
+};
+void cumpleanos(estudiante * cumpleanero){
+		cumpleanero->edad++;
+};
 int main() {
 	int num_estudiantes;
 	int edad;
@@ -47,13 +50,14 @@ int main() {
 		printf("nombre: ");	
 		scanf("%s",nombre);
 		inicializar(listado+i,nombre,edad,nota);
-		//inicializar(&listado[0],nombre,edad,nota);
-	}
-/*
-	for(int i=0;i>num_estudiantes;i++){
-		printf("%s\n%d %f",listado->nombre,listado->edad,listado->nota);
+		//inicializar(&listado[0],nombre,edad,nota); misma cosa
+		printf("Edad de %s %d\n",listado[i].nombre,listado[i].edad);
+		cumpleanos(&listado[i]);
+		printf("Edad %s %d\n",listado[i].nombre,listado[i].edad);
 
+		//printf("Edad %s %d\n",(listado+i)->nombre,listado[i].edad); Para apuntar a otra posicion que no sea la primera usando la flecha suma en paréntesis
+		
+		//			ASÍ NO [listado+i->nombre] ASÍ NO
 	}
-*/
 	return 0;
 }
