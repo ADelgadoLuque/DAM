@@ -9,19 +9,22 @@
  *
  *	Título:Práctica 6: Gestión de biblioteca
  */
-
+/*DEFINE*/
 #define MAX_TITULO 80
 #define MAX_AUTOR 50
 #define MAX_LIBROS 40
+/*--------------*/
 
+/*ENUM DE LAS CATEGORÍAS DE LOS LIBROS*/
 typedef enum{
 	FICCION,
 	NO_FICCION,
 	POESIA,
 	TEATRO,
-	ENSAYO
+	ENSAYO 
 }genero;
-//struct de la información del libro
+
+/*struct de la información del libro*/
 typedef struct{ 
 	int ID;
 	char titulo[MAX_TITULO];
@@ -31,29 +34,98 @@ typedef struct{
 	int stock;
 }Libro;
 
+/*FUNCIÓN PARA MOSTRAR TODOS LOS LIBROS*/
 void mostrarlibros(Libro * datos){
 for (int i = 0; i < MAX_LIBROS; ++i){
 printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);
 };
 };
-void mostrarlibroid(){
 
+/*FUNCIÓN PARA MOSTRAR EL LIBRO CORRESPONDIENTE CON EL ID INTRODUCIDO*/
+void mostrarlibroid(int ID_Libro,Libro * datos){
+	if (ID_Libro<0|ID_Libro>=MAX_LIBROS)
+	{
+		printf("Error\n");
+	}else{
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+ID_Libro)->ID, (datos+ID_Libro)->titulo, (datos+ID_Libro)->autor, (datos+ID_Libro)->precio, (datos+ID_Libro)->genero, (datos+ID_Libro)->stock);
+	};
+	};
+/*FUNCIÓN PARA AUMENTAR EL STOCK DE UN LIBRO*/
+void aumentarstock(int ID_Libro,int AumentarStock, Libro * datos){
+printf("Stock previo: %d \n",(datos+ID_Libro)->stock);
+
+datos[ID_Libro].stock+=AumentarStock;
+printf("Stock actualizado: %d \n",(datos+ID_Libro)->stock);
+	
 };
-void aumentarstock(){
 
+/*MOSTRAR TODOS LOS LIBROS DE UNA CATEGORÍA*/
+void mostrarlibroscategoria(char Categoria_Buscar,Libro * datos){
+switch (Categoria_Buscar){
+
+case 0:
+for (int i = 0; i < MAX_LIBROS; ++i){
+if (Categoria_Buscar==datos[i].genero){
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
 };
-void mostrarlibrosautor(){
-
 };
-void mostrarlibroscategoria(){
+break;
 
+case 1:
+for (int i = 0; i < MAX_LIBROS; ++i){
+if (Categoria_Buscar==datos[i].genero){
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
+};
+};
+break;
+
+case 2:
+for (int i = 0; i < MAX_LIBROS; ++i){
+if (Categoria_Buscar==datos[i].genero){
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
+};
+};
+break;
+
+case 3:
+for (int i = 0; i < MAX_LIBROS; ++i){
+if (Categoria_Buscar==datos[i].genero){
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
+};
+};
+break;
+
+case 4:
+for (int i = 0; i < MAX_LIBROS; ++i){
+if (Categoria_Buscar==datos[i].genero){
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
+};
+};
+break;
+
+default:
+printf("Error\n");
+};
+};
+
+/*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
+void mostrarlibrosautor(char * Autor_Buscar,Libro * datos){
+for (int i = 0; i < MAX_LIBROS; ++i){
+printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);
+};
 };
 
 
 
 
-int main() {
+void main() {
+/*DEFINICIÓN DE VARIABLES*/
 int accion;
+int ID_Libro;
+int AumentarStock;
+int Categoria_Buscar;
+char Autor_Buscar[MAX_AUTOR];
+
 	Libro Libros[MAX_LIBROS] = {
 		{1, "To Kill a Mockingbird", "Harper Lee", 15.99, FICCION, 10},
 		{2, "1984", "George Orwell", 12.49, FICCION, 5},
@@ -97,7 +169,7 @@ int accion;
 		{40, "Thus Spoke Zarathustra", "Friedrich Nietzsche", 14.99, ENSAYO, 10}
 	}; 
 
-	while(accion!=6){
+	do{
 	printf("Elige la acción: \n 1.Mostrar todos los libros. \n 2.Mostrar un libro por ID \n 3.Aumentar stock de un libro \n 4.Mostrar todos los libros de una categoría \n 5.Mostrar los libros de un autor \n 6.Salir\n");
 
 	scanf("%d",&accion);
@@ -110,27 +182,40 @@ int accion;
 
 	case 2:
 
+		printf("Introduce el ID a buscar: ");
+		scanf("%d",&ID_Libro);
+		mostrarlibroid(ID_Libro-1,Libros);
 		break;
 
 	case 3:
 
+		printf("Introduce el ID a aumentar el stock: ");
+		scanf("%d",&ID_Libro);
+		printf("Introduce la cantidad a añadir al stock: ");
+		scanf("%d",&AumentarStock);
+		aumentarstock(ID_Libro-1,AumentarStock,Libros);
 		break;
 
 	case 4:
 
+		printf("Introduce la categoría a mostrar: ");
+		scanf("%d",&Categoria_Buscar);
+		mostrarlibroscategoria(Categoria_Buscar,Libros);
 		break;
 
 	case 5:
 
+		printf("Introduce el nombre del autor a buscar");
+		scanf("%s",Autor_Buscar);
+		mostrarlibrosautor(Autor_Buscar-1,Libros);
 		break;
 
 	case 6:
-
+		accion=6;
 		break;
 	
 	default:
 		printf("Error");
 	}
-}
-	return 0;
+}while(accion!=6);
 }

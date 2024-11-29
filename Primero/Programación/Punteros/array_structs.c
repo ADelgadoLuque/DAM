@@ -29,8 +29,8 @@ void cumpleanos(estudiante * cumpleanero){
 cumpleanero->edad++;
 };
 void imprimiralumno(const estudiante * estudiante_a_imprimir ){
-//const int* Bloquea la modificación del CONTENIDO del puntero
-//const alumno Bloquea la modificación del puntero(Dirección de memoria)
+//const int* alumnoBloquea la modificación del CONTENIDO del puntero
+//int * const alumno Bloquea la modificación del puntero(Dirección de memoria)
 printf("Nombre: %s \n",estudiante_a_imprimir->nombre); 
 printf("\tEdad: %d \n",estudiante_a_imprimir->edad);
 printf("\tNota: %f \n",estudiante_a_imprimir->nota);
