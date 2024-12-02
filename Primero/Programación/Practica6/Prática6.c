@@ -43,7 +43,7 @@ printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock:
 
 /*FUNCIÓN PARA MOSTRAR EL LIBRO CORRESPONDIENTE CON EL ID INTRODUCIDO*/
 void mostrarlibroid(int ID_Libro,Libro * datos){
-	if (ID_Libro<0|ID_Libro>=MAX_LIBROS)
+	if ((ID_Libro<0)|(ID_Libro>=MAX_LIBROS))
 	{
 		printf("Error\n");
 	}else{
@@ -111,10 +111,24 @@ printf("Error\n");
 /*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
 void mostrarlibrosautor(char * Autor_Buscar,Libro * datos){
 for (int i = 0; i < MAX_LIBROS; ++i){
-printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);
+int no_correcto=0;
+for (int j; j< strlen(datos[i].autor); j++)//bucle letra por letra
+{
+if (Autor_Buscar[j]!=datos[i].autor[j]){
+	{
+	no_correcto=1;
+	};
+
 };
+if (no_correcto==0)
+{
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
 };
 
+};
+};
+printf("Fin");
+};
 
 
 
@@ -204,10 +218,10 @@ char Autor_Buscar[MAX_AUTOR];
 		break;
 
 	case 5:
-
-		printf("Introduce el nombre del autor a buscar");
+	strmg(str1,str2,str3==str1)
+		printf("Introduce el nombre del autor a buscar: ");
 		scanf("%s",Autor_Buscar);
-		mostrarlibrosautor(Autor_Buscar-1,Libros);
+		mostrarlibrosautor(Autor_Buscar,Libros);
 		break;
 
 	case 6:
