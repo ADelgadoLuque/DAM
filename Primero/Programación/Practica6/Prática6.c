@@ -110,24 +110,14 @@ printf("Error\n");
 
 /*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
 void mostrarlibrosautor(char * Autor_Buscar,Libro * datos){
+printf("simón %s\n",Autor_Buscar);	
 for (int i = 0; i < MAX_LIBROS; ++i){
-int no_correcto=0;
-for (int j; j< strlen(datos[i].autor); j++)//bucle letra por letra
-{
-if (Autor_Buscar[j]!=datos[i].autor[j]){
-	{
-	no_correcto=1;
-	};
-
+if(strcmp(Autor_Buscar,datos[i].autor)==0){
+printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);
 };
-if (no_correcto==0)
-{
-	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %d \nStock: %d \n",(datos+i)->ID, (datos+i)->titulo, (datos+i)->autor, (datos+i)->precio, (datos+i)->genero, (datos+i)->stock);	
 };
 
-};
-};
-printf("Fin");
+printf("Fin\n");
 };
 
 
@@ -141,7 +131,7 @@ int Categoria_Buscar;
 char Autor_Buscar[MAX_AUTOR];
 
 	Libro Libros[MAX_LIBROS] = {
-		{1, "To Kill a Mockingbird", "Harper Lee", 15.99, FICCION, 10},
+		{1, "To Kill a Mockingbird", "Harper", 15.99, FICCION, 10},
 		{2, "1984", "George Orwell", 12.49, FICCION, 5},
 		{3, "The Great Gatsby", "F. Scott Fitzgerald", 10.99, FICCION, 8},
 		{4, "Moby Dick", "Herman Melville", 18.99, FICCION, 12},
@@ -218,9 +208,9 @@ char Autor_Buscar[MAX_AUTOR];
 		break;
 
 	case 5:
-	strmg(str1,str2,str3==str1)
 		printf("Introduce el nombre del autor a buscar: ");
-		scanf("%s",Autor_Buscar);
+		scanf(" ");
+		fgets(Autor_Buscar,MAX_AUTOR*sizeof(char),stdin);
 		mostrarlibrosautor(Autor_Buscar,Libros);
 		break;
 
