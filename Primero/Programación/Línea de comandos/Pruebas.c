@@ -32,7 +32,7 @@ typedef struct{
 	int stock;
 }Libro;
 
-void main(int argc, char ** argv) {
+void main(int argc, void ** argv) {
 /*DEFINICIÓN DE VARIABLES*/
 	
 	Libro Libros[MAX_LIBROS] = {
@@ -85,25 +85,25 @@ void main(int argc, char ** argv) {
 
 	if (argc>1)
 	{
-		if (strcmp(argv[1],"mostrar\0")==0){
+		if (strcmp(argv[1],"mostrar\0")==0&& argc<3){
 			printf("todos los libros\n"); //IMPRIMIR TODOS LOS LIBROS
 		};
 
-		if (strcmp(argv[1],"mostrar\0")==0 && (argv[2]>0))
+		if (strcmp(argv[1],"mostrar\0")==0 && (argc>2))
 		{
-			printf("hola\n"); //IMPRIMIR POR ID
+			printf("libro por id\n"); //IMPRIMIR POR ID
 		};
-		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && (argv[3]>0)) 
+		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && *((int *)argv[3])>0) 
 		{
 			printf("aumentaste el stock OwO\n"); //AUMENTAR STOCK POR ID
 		};
-		if (strcmp(argv[1],"categoria\0")==0 && (argv[2]>0)) 
+		if (strcmp(argv[1],"categoria\0")==0 && *((int *)argv[2])>0)
 		{
-			printf("imprimir la categoria %d\n",argv[2]); //Imprimir la categoria
+			printf("imprimir la categoria %d\n",*((int *)argv[2])); //Imprimir la categoria
 		};
-		if (strcmp(argv[1],"autor\0")==0 && (argv[2]!=NULL)) 
+		if (strcmp(argv[1],"autor\0")==0 && argc==3) 
 		{
-			printf("imprimir por autor "); //Imprimir la categoria
+			printf("imprimir por autor \n"); //Imprimir por autor
 		};
 	}
 }
