@@ -29,7 +29,7 @@ arr = (int *) realloc(arr,5*sizeof(int));
 if (arr == NULL)
  {
  	free(arr);
- 	printf("Error fatal: Memoria insuficientepara redimensionar\n");
+ 	printf("Error fatal: Memoria insuficiente para redimensionar\n");
  	return 1;
  }
 

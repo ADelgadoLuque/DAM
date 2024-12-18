@@ -93,13 +93,13 @@ void main(int argc, void ** argv) {
 		{
 			printf("libro por id\n"); //IMPRIMIR POR ID
 		};
-		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && *((int *)argv[3])>0) 
+		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && atoi(argv[3])>0) 
 		{
-			printf("aumentaste el stock OwO\n"); //AUMENTAR STOCK POR ID
+			printf("aumentaste el stock\n"); //AUMENTAR STOCK POR ID
 		};
-		if (strcmp(argv[1],"categoria\0")==0 && *((int *)argv[2])>0)
+		if (strcmp(argv[1],"categoria\0")==0 && atoi(argv[2])>0)
 		{
-			printf("imprimir la categoria %d\n",*((int *)argv[2])); //Imprimir la categoria
+			printf("imprimir la categoria %d\n",atoi(argv[2])); //Imprimir la categoria
 		};
 		if (strcmp(argv[1],"autor\0")==0 && argc==3) 
 		{
