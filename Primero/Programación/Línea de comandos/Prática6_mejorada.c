@@ -12,7 +12,7 @@
 /*DEFINES*/
 #define MAX_TITULO 80
 #define MAX_AUTOR 50
-#define MAX_LIBROS 40
+#define MAX_GENERO 20
 /*--------------*/
 
 /*ENUM DE LAS CATEGORÍAS DE LOS LIBROS*/
@@ -21,7 +21,8 @@ typedef enum{
 	NO_FICCION,
 	POESIA,
 	TEATRO,
-	ENSAYO 
+	ENSAYO, 
+	ERROR
 }genero;
 
 /*struct de la información del libro*/
@@ -42,16 +43,17 @@ char * EnumAString(genero Genero){
 	case POESIA: return "POESIA";
 	case TEATRO: return "TEATRO";
 	case ENSAYO: return "ENSAYO";
-	default:return"Error";
+	default:return "ERROR";
 	}
 }
-genero StringAEnum(char Genero[20]){
+genero StringAEnum(char Genero[MAX_GENERO]){
 
 	if(strcmp(Genero,"FICCION")==0) return FICCION ;
 	else if(strcmp(Genero,"NO_FICCION")==0) return NO_FICCION ;
 	else if(strcmp(Genero,"POESIA")==0) return POESIA ;
 	else if(strcmp(Genero,"TEATRO")==0) return TEATRO ;
 	else if(strcmp(Genero,"ENSAYO")==0) return ENSAYO ;
+	else return ERROR;
 	}
 
 
@@ -72,27 +74,27 @@ Libro inicializarlibro(int ID,char * titulo, char * autor,float precio, genero g
 	return(libro);
 }
 /*FUNCIÓN GENERAL PARA IMPRIMIR LOS DATOS DE LOS LIBROS*/
-void imprimirlibro( const Libro * const datos){ 
-	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %s \nStock: %d \n\n",(datos)->ID, (datos)->titulo, (datos)->autor, (datos)->precio, EnumAString(datos->genero), (datos)->stock);
+void imprimirlibro( const Libro * const catalogo){ 
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %s \nStock: %d \n\n",(catalogo)->ID, (catalogo)->titulo, (catalogo)->autor, (catalogo)->precio, EnumAString(catalogo->genero), (catalogo)->stock);
 																								//Utilizo flechas cuando necesito llamar al contenido de partes del struct. 
 };
 /*FUNCIÓN PARA MOSTRAR TODOS LOS LIBROS*/
 
-void mostrarlibros(const Libro * const datos,int *total_libros){
+void mostrarlibros(const Libro * const catalogo,const int * const total_libros){
 	for (int i = 0; i < *total_libros; ++i){//El bucle recorre todo el Array de libros y los imprime.
-		imprimirlibro(&datos[i]);
+		imprimirlibro(&catalogo[i]);
 	};
 };
 
 /*FUNCIÓN PARA MOSTRAR EL LIBRO CORRESPONDIENTE CON EL ID INTRODUCIDO*/
 
 //En el caso de ID_Libro no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
-void mostrarlibroid(int ID_Libro,const Libro * const datos,int *total_libros){
+void mostrarlibroid(int ID_Libro,const Libro * const catalogo,const int * const total_libros){
 	if ((ID_Libro<0)|(ID_Libro>=*total_libros))//Compruebo que el id a buscar está dentro del máximo de libros
 	{
 		printf("Error\n");//si no lo está o se escribe algun carácter no numérico muestra error
 	}else{
-		imprimirlibro(&datos[ID_Libro]);//en este caso se imprime el libro correspondiente al ID introducido ya que no hay bucle como en el resto de los casos
+		imprimirlibro(&catalogo[ID_Libro]);//en este caso se imprime el libro correspondiente al ID introducido ya que no hay bucle como en el resto de los casos
 	};
 };
 /*FUNCIÓN PARA AUMENTAR EL STOCK DE UN LIBRO*/
@@ -100,76 +102,35 @@ void mostrarlibroid(int ID_Libro,const Libro * const datos,int *total_libros){
 //En esta función es necesario pasar por referencia los datos esto debido a que si lo paso por valor la modificación no se aplica al array original. 
 //También es necesario no usar const ya que vamos a modificar el stock del libro. 
 //En el caso de ID_Libro y AumentarStock no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
-void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const datos,int *total_libros){
+void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const catalogo,int *total_libros){
 	if ((ID_Libro<0)|(ID_Libro>=*total_libros)){//Compruebo que el id a buscar NO está dentro del máximo de libros
 
 		printf("Error\n");//Si no lo está o se escribe algun carácter no numérico muestra error
 	}else{
 
-		printf("Stock previo: %d \n",(datos+ID_Libro)->stock);
+		printf("Stock previo: %d \n",(catalogo+ID_Libro)->stock);
 
-	datos[ID_Libro].stock+=AumentarStock;//Se aumenta el stock del libro correspondiente al id introducido por la cantidad introducida
+	catalogo[ID_Libro].stock+=AumentarStock;//Se aumenta el stock del libro correspondiente al id introducido por la cantidad introducida
 	
-	printf("Stock actualizado: %d \n",(datos+ID_Libro)->stock);
-
+	printf("Stock actualizado: %d \n",(catalogo+ID_Libro)->stock);
+	mostrarlibroid(ID_Libro,catalogo,total_libros);
 };
 };
 
 /*MOSTRAR TODOS LOS LIBROS DE UNA CATEGORÍA*/
-void mostrarlibroscategoria(int Categoria_Buscar,const Libro * const datos){
-	/*Cada caso está asignado a una categoría definida en el enum. 
-	Como los datos del enum aunque con nombre propio (Ej. FICCION) realmente son numeros enteros de ahí que los "case" sean numeros enteros*/
-
-	switch (Categoria_Buscar){
-
-	case 0:
-		for (int i = 0; i < MAX_LIBROS; ++i){
-			if (Categoria_Buscar==datos[i].genero){//Aquí en vez de usar flechas uso punto"datos[i].genero" ya que es mas entendible que la alternativa con flechas "(datos+i)->genero".Esto lo aplico en todos los bucles
-				imprimirlibro(&datos[i]);
-			};
-		};
-		break;
-
-	case 1:
-		for (int i = 0; i < MAX_LIBROS; ++i){
-			if (Categoria_Buscar==datos[i].genero){
-				imprimirlibro(&datos[i]);
-			};
-		};
-		break;
-
-	case 2:
-		for (int i = 0; i < MAX_LIBROS; ++i){
-			if (Categoria_Buscar==datos[i].genero){
-				imprimirlibro(&datos[i]);
-			};
-		};
-		break;
-
-	case 3:
-		for (int i = 0; i < MAX_LIBROS; ++i){
-			if (Categoria_Buscar==datos[i].genero){
-				imprimirlibro(&datos[i]);
-			};
-		};
-		break;
-
-	case 4:
-		for (int i = 0; i < MAX_LIBROS; ++i){
-			if (Categoria_Buscar==datos[i].genero){
-				imprimirlibro(&datos[i]);
-			};
-		};
-		break;
-
-	default:
-		printf("Error\n"); //si no se introdujo un valor válido muestra error
+void mostrarlibroscategoria(const Libro * const catalogo,genero Categoria_Buscar,const int * const total_libros){
+for (int i = 0; i < *total_libros; ++i){
+	if (catalogo[i].genero==Categoria_Buscar)
+	{
+		imprimirlibro(&catalogo[i]);
+	}
 	};
+	
 };
 
 /*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
 
-void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const datos,int *total_libros){
+void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const catalogo,const int * const total_libros){
 	/*Se compara el autor introducido con el string autor de cada libro, Se empieza con una comparación normal. Si son iguales imprime los datos del libro.
 	 En caso contrario se vuelve a comparar pero esta vez el string del autor del libro que toque inicia un caracter después que en el anterior. 
 	 Este ciclo se repite hasta que los strings coinciden o acaba el string*/
@@ -178,13 +139,13 @@ void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const dato
 		AutorOK=0;
 		for (int j = 0; j < (MAX_AUTOR-(strlen(Autor_Buscar)-1)); ++j){
 
-			if (strncmp(Autor_Buscar,datos[i].autor+j,(strlen(Autor_Buscar)-1))==0){ 
+			if (strncmp(Autor_Buscar,catalogo[i].autor+j,(strlen(Autor_Buscar)-1))==0){ 
 				AutorOK=1;
 				break;
 			};
 		};
 		if (AutorOK==1){		
-			imprimirlibro(&datos[i]);
+			imprimirlibro(&catalogo[i]);
 
 		};
 
@@ -200,8 +161,9 @@ Libro anadirlibro(Libro * catalogo,int * total_libros){
 	char autor[MAX_AUTOR];
 	float precio;
 	int stock;
-	char categoria[20];
-
+	char categoria[MAX_GENERO];
+	char consumo;
+	scanf("%c",&consumo);
 printf("Título\n");
 	fgets(titulo,MAX_TITULO,stdin);
 printf("Autor\n");
@@ -217,13 +179,8 @@ printf("Stock\n");
 	return(libro);
 }
 
-int main() {
-/*DEFINICIÓN DE VARIABLES*/
-	/*int ID_Libro;
-	int AumentarStock;
-	int Categoria_Buscar;
-	char Autor_Buscar[MAX_AUTOR];
-	*/
+int main(int argc, void ** argv) {
+
 	int total_libros=0;
 	Libro * catalogo=(Libro *)malloc(sizeof(Libro)*40);
 	catalogo[0]=inicializarlibro(1, "To Kill a Mockingbird", "Harper Lee", 15.99, FICCION, 10,&total_libros);
@@ -267,8 +224,104 @@ int main() {
 	catalogo[38]=inicializarlibro(39, "The Republic", "Plato", 16.00, ENSAYO, 6,&total_libros);
 	catalogo[39]=inicializarlibro(40, "Thus Spoke Zarathustra", "Friedrich Nietzsche", 14.99, ENSAYO, 10,&total_libros);
 
-	catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
+	/*catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
+	mostrarlibros(catalogo,&total_libros);*/
+	if (argc==1)
+	{
+	/*DEFINICIÓN DE VARIABLES*/
+	int accion;
+	int ID_Libro;
+	int AumentarStock;
+	char Categoria_Buscar[MAX_GENERO];
+	char Autor_Buscar[MAX_AUTOR];
+	
+		do{//Switch case en un bucle do while para que el menú se ejecute después de cada acción hasta que el usuario seleccione 6 (Salir) 
+		printf("Elige la acción: \n 1.Mostrar todos los libros. \n 2.Mostrar un libro por ID \n 3.Aumentar stock de un libro \n 4.Mostrar todos los libros de una categoría \n 5.Mostrar los libros de un autor \n 6.Añadir un libro \n 7.Salir\n ");
 
-	mostrarlibros(catalogo,&total_libros);
+		scanf("%d",&accion);
+
+		switch(accion){
+
+		case 1:
+			mostrarlibros(catalogo,&total_libros);
+			break;
+
+		case 2:
+
+			printf("Introduce el ID a buscar: ");
+			scanf("%d",&ID_Libro);
+			mostrarlibroid(ID_Libro-1,catalogo,&total_libros);//Le resto 1 a ID_Libro ya que el array empieza en 0 pero el primer ID es el 1
+			break;
+
+		case 3:
+
+			printf("Introduce el ID a aumentar el stock: ");
+			scanf("%d",&ID_Libro);
+			printf("Introduce la cantidad a añadir al stock: ");
+			scanf("%d",&AumentarStock);
+			aumentarstock(ID_Libro-1,AumentarStock,catalogo,&total_libros);//Le resto 1 a ID_Libro ya que el array empieza en 0 pero el primer ID es el 1
+			break;
+
+		case 4:
+
+			printf("Introduce la categoría a mostrar: ");
+			scanf("%s",Categoria_Buscar);
+			mostrarlibroscategoria(catalogo,StringAEnum(Categoria_Buscar),&total_libros);
+			break;
+
+		case 5:
+			printf("Introduce el nombre del autor a buscar: ");
+			scanf(" ");//Este scanf está aquí para consumir el \n de seleccionar la acción y que funcione el fgets. QUITAR CON CUIDADO
+			fgets(Autor_Buscar,MAX_AUTOR,stdin);//Recoge el nombre del autor con espacios para luego utilizarlo en la función
+			mostrarlibrosautor(Autor_Buscar,catalogo,&total_libros);
+			break;
+
+		case 6:
+	printf("%d",total_libros);
+			anadirlibro(catalogo,&total_libros);
+			break;
+
+		default:
+			printf("Error");//si no se introduce un número del 1 al 6 muestra error
+		}
+	}while(accion!=7);
+	}
+	
+
+	if (argc>1)
+	{
+		if (argc==2 && strcmp(argv[1],"mostrar\0")==0){
+			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
+		
+		}else if (argc==3 && strcmp(argv[1],"mostrar\0")==0 && atoi(argv[2])<=total_libros ){
+			mostrarlibroid(atoi(argv[2])-1,catalogo,&total_libros); //IMPRIMIR POR ID
+		
+		}else if (argc==4 && strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && atoi(argv[3])>0) {
+			aumentarstock(atoi(argv[2])-1,atoi(argv[3]),catalogo,&total_libros);
+		
+		}else if (argc==3 && strcmp(argv[1],"categoria\0")==0 && StringAEnum(argv[2])!=ERROR){
+			mostrarlibroscategoria(catalogo,StringAEnum(argv[2]),&total_libros); //Imprimir la categoria
+		
+		}else if (argc==3 && strcmp(argv[1],"autor\0")==0){
+			mostrarlibrosautor((char *)argv[2],catalogo,&total_libros); //Imprimir por autor
+		}else if (argc==2 && strcmp(argv[1],"añadir\0")==0){
+			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
+			mostrarlibros(catalogo,&total_libros);
+		}else{
+			printf("Error de sintaxis\n");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	return 0;
 }
