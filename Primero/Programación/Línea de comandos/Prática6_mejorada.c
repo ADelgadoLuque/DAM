@@ -54,7 +54,7 @@ genero StringAEnum(char Genero[MAX_GENERO]){
 	else if(strcmp(Genero,"TEATRO")==0) return TEATRO ;
 	else if(strcmp(Genero,"ENSAYO")==0) return ENSAYO ;
 	else return ERROR;
-	}
+}
 
 
 //Como norma general paso por referencia ya que es más eficiente en términos de memoria aunque se podría pasar por valor los parámetros en todas las funciones menos la función "aumentarstock".
@@ -118,12 +118,12 @@ void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const catalogo,int *
 };
 
 /*MOSTRAR TODOS LOS LIBROS DE UNA CATEGORÍA*/
-void mostrarlibroscategoria(const Libro * const catalogo,genero Categoria_Buscar,const int * const total_libros){
-for (int i = 0; i < *total_libros; ++i){
-	if (catalogo[i].genero==Categoria_Buscar)
-	{
-		imprimirlibro(&catalogo[i]);
-	}
+void mostrarlibroscategoria(const Libro * const catalogo,const genero Categoria_Buscar,const int * const total_libros){
+	for (int i = 0; i < *total_libros; ++i){
+		if (catalogo[i].genero==Categoria_Buscar)
+		{
+			imprimirlibro(&catalogo[i]);
+		}
 	};
 	
 };
@@ -162,17 +162,16 @@ Libro anadirlibro(Libro * catalogo,int * total_libros){
 	float precio;
 	int stock;
 	char categoria[MAX_GENERO];
-	char consumo;
-	scanf("%c",&consumo);
-printf("Título\n");
+
+	printf("Título\n");
 	fgets(titulo,MAX_TITULO,stdin);
-printf("Autor\n");
+	printf("Autor\n");
 	fgets(autor,MAX_AUTOR,stdin);
-printf("Precio\n");
+	printf("Precio\n");
 	scanf("%f",&precio);
-printf("Categoría\n");
+	printf("Categoría\n");
 	scanf("%s",categoria);
-printf("Stock\n");
+	printf("Stock\n");
 	scanf("%d",&stock);
 
 	Libro libro=inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
@@ -224,32 +223,31 @@ int main(int argc, void ** argv) {
 	catalogo[38]=inicializarlibro(39, "The Republic", "Plato", 16.00, ENSAYO, 6,&total_libros);
 	catalogo[39]=inicializarlibro(40, "Thus Spoke Zarathustra", "Friedrich Nietzsche", 14.99, ENSAYO, 10,&total_libros);
 
-	/*catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
-	mostrarlibros(catalogo,&total_libros);*/
+
+/*
 	if (argc==1)
 	{
-	/*DEFINICIÓN DE VARIABLES*/
-	int accion;
-	int ID_Libro;
-	int AumentarStock;
-	char Categoria_Buscar[MAX_GENERO];
-	char Autor_Buscar[MAX_AUTOR];
-	
+	//DEFINICIÓN DE VARIABLES
+		int accion;
+		int ID_Libro;
+		int AumentarStock;
+		char Categoria_Buscar[MAX_GENERO];
+		char Autor_Buscar[MAX_AUTOR];
 		do{//Switch case en un bucle do while para que el menú se ejecute después de cada acción hasta que el usuario seleccione 6 (Salir) 
-		printf("Elige la acción: \n 1.Mostrar todos los libros. \n 2.Mostrar un libro por ID \n 3.Aumentar stock de un libro \n 4.Mostrar todos los libros de una categoría \n 5.Mostrar los libros de un autor \n 6.Añadir un libro \n 7.Salir\n ");
+			printf("Elige la acción: \n 1.Mostrar todos los libros. \n 2.Mostrar un libro por ID \n 3.Aumentar stock de un libro \n 4.Mostrar todos los libros de una categoría \n 5.Mostrar los libros de un autor \n 6.Añadir un libro \n 7.Salir\n ");
 
-		scanf("%d",&accion);
+			scanf("%d",&accion);
 
-		switch(accion){
+			switch(accion){
 
-		case 1:
-			mostrarlibros(catalogo,&total_libros);
-			break;
+			case 1:
+				mostrarlibros(catalogo,&total_libros);
+				break;
 
-		case 2:
+			case 2:
 
-			printf("Introduce el ID a buscar: ");
-			scanf("%d",&ID_Libro);
+				printf("Introduce el ID a buscar: ");
+				scanf("%d",&ID_Libro);
 			mostrarlibroid(ID_Libro-1,catalogo,&total_libros);//Le resto 1 a ID_Libro ya que el array empieza en 0 pero el primer ID es el 1
 			break;
 
@@ -277,51 +275,52 @@ int main(int argc, void ** argv) {
 			break;
 
 		case 6:
-	printf("%d",total_libros);
-			anadirlibro(catalogo,&total_libros);
+			printf("Introduce los datos del libro a añadir: \n");
+				char consumo;
+	
+				scanf("%c",&consumo); //consumo se encarga del \0 resultante de pulsar enter
+			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
 			break;
 
 		default:
 			printf("Error");//si no se introduce un número del 1 al 6 muestra error
 		}
 	}while(accion!=7);
+	}								MENU
+*/
+
+
+	if (argc==2){
+		
+		if (strcmp(argv[1],"mostrar\0")==0){
+			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
+		}else if (strcmp(argv[1],"añadir\0")==0){
+			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
+			mostrarlibros(catalogo,&total_libros);
+		}
+
+	}else if (argc==3){
+		if (strcmp(argv[1],"mostrar\0")==0 && atoi(argv[2])<=total_libros ){
+			mostrarlibroid(atoi(argv[2])-1,catalogo,&total_libros); //IMPRIMIR POR ID
+
+		}else if (strcmp(argv[1],"categoria\0")==0 && StringAEnum(argv[2])!=ERROR){
+																//compruebo que la categoría introducida corresponde con una de las presentes en el enum
+			mostrarlibroscategoria(catalogo,StringAEnum(argv[2]),&total_libros); //Imprimir la categoria
+
+		}else if (strcmp(argv[1],"autor\0")==0){
+			mostrarlibrosautor((char *)argv[2],catalogo,&total_libros); //Imprimir por autor
+		}
+		
+	}else if (argc==4){
+		
+		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && atoi(argv[3])>0) {
+			aumentarstock(atoi(argv[2])-1,atoi(argv[3]),catalogo,&total_libros);
+		}
+	}else{
+		printf("Error de sintaxis\n");
 	}
 	
 
-	if (argc>1)
-	{
-		if (argc==2 && strcmp(argv[1],"mostrar\0")==0){
-			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
-		
-		}else if (argc==3 && strcmp(argv[1],"mostrar\0")==0 && atoi(argv[2])<=total_libros ){
-			mostrarlibroid(atoi(argv[2])-1,catalogo,&total_libros); //IMPRIMIR POR ID
-		
-		}else if (argc==4 && strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && atoi(argv[3])>0) {
-			aumentarstock(atoi(argv[2])-1,atoi(argv[3]),catalogo,&total_libros);
-		
-		}else if (argc==3 && strcmp(argv[1],"categoria\0")==0 && StringAEnum(argv[2])!=ERROR){
-			mostrarlibroscategoria(catalogo,StringAEnum(argv[2]),&total_libros); //Imprimir la categoria
-		
-		}else if (argc==3 && strcmp(argv[1],"autor\0")==0){
-			mostrarlibrosautor((char *)argv[2],catalogo,&total_libros); //Imprimir por autor
-		}else if (argc==2 && strcmp(argv[1],"añadir\0")==0){
-			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
-			mostrarlibros(catalogo,&total_libros);
-		}else{
-			printf("Error de sintaxis\n");
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	free(catalogo);
 	return 0;
 }
