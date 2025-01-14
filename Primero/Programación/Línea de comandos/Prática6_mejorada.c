@@ -75,7 +75,7 @@ Libro inicializarlibro(int ID,char * titulo, char * autor,float precio, genero g
 }
 /*FUNCIÓN GENERAL PARA IMPRIMIR LOS DATOS DE LOS LIBROS*/
 void imprimirlibro( const Libro * const catalogo){ 
-	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %f \nGénero: %s \nStock: %d \n\n",(catalogo)->ID, (catalogo)->titulo, (catalogo)->autor, (catalogo)->precio, EnumAString(catalogo->genero), (catalogo)->stock);
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %.2f \nGénero: %s \nStock: %d \n\n",(catalogo)->ID, (catalogo)->titulo, (catalogo)->autor, (catalogo)->precio, EnumAString(catalogo->genero), (catalogo)->stock);
 																								//Utilizo flechas cuando necesito llamar al contenido de partes del struct. 
 };
 /*FUNCIÓN PARA MOSTRAR TODOS LOS LIBROS*/
@@ -156,6 +156,7 @@ void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const cata
 Libro anadirlibro(Libro * catalogo,int * total_libros){
 
 	catalogo=(Libro *)realloc(catalogo,sizeof(Libro)*(*total_libros+1));
+	
 	int ID=*total_libros+1;
 	char titulo[MAX_TITULO];
 	char autor[MAX_AUTOR];
@@ -163,6 +164,7 @@ Libro anadirlibro(Libro * catalogo,int * total_libros){
 	int stock;
 	char categoria[MAX_GENERO];
 
+	//Recojo los datos que componen el libro
 	printf("Título\n");
 	fgets(titulo,MAX_TITULO,stdin);
 	printf("Autor\n");
@@ -173,7 +175,7 @@ Libro anadirlibro(Libro * catalogo,int * total_libros){
 	scanf("%s",categoria);
 	printf("Stock\n");
 	scanf("%d",&stock);
-
+	//Llamo a inicializarlibro para "montar el libro" con los datos recogidos
 	Libro libro=inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
 	return(libro);
 }
@@ -223,6 +225,7 @@ int main(int argc, void ** argv) {
 	catalogo[38]=inicializarlibro(39, "The Republic", "Plato", 16.00, ENSAYO, 6,&total_libros);
 	catalogo[39]=inicializarlibro(40, "Thus Spoke Zarathustra", "Friedrich Nietzsche", 14.99, ENSAYO, 10,&total_libros);
 
+//MENU
 
 /*
 	if (argc==1)
@@ -288,9 +291,17 @@ int main(int argc, void ** argv) {
 	}while(accion!=7);
 	}								MENU
 */
+	if (argc==1)
+	{
+		printf("	añadir		     	Añade un libro al catálogo e imprime el catálogo entero\n");
+		printf("	mostrar     		Muestra todo el catálogo de libros\n");
+		printf("	mostrar [ID]		Muestra todo el libro correspondiente al ID introducido\n");
+		printf("	stock [ID] [cant]   	Añade unidades al libro correspondienteal ID\n");
+		printf("	categoria [cat]     	Muestra todos los libros que correspondan a la categoría introducida (FICCION,NO_FICCION,TEATRO,POESIA,ENSAYO)\n");
+		printf("	autor [nombre]     	Muestra todos los libros del autor introducidos\n");
 
 
-	if (argc==2){
+	}else if (argc==2){
 		
 		if (strcmp(argv[1],"mostrar\0")==0){
 			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
@@ -303,6 +314,9 @@ int main(int argc, void ** argv) {
 		if (strcmp(argv[1],"mostrar\0")==0 && atoi(argv[2])<=total_libros ){
 			mostrarlibroid(atoi(argv[2])-1,catalogo,&total_libros); //IMPRIMIR POR ID
 
+		}else if (strcmp(argv[1],"mostrar\0")==0 && (atoi(argv[2])>	total_libros || atoi(argv[2])<0) ){
+			printf("El ID introducido no corresponde a ningún libro del catálogo\n");
+
 		}else if (strcmp(argv[1],"categoria\0")==0 && StringAEnum(argv[2])!=ERROR){
 																//compruebo que la categoría introducida corresponde con una de las presentes en el enum
 			mostrarlibroscategoria(catalogo,StringAEnum(argv[2]),&total_libros); //Imprimir la categoria
@@ -313,12 +327,15 @@ int main(int argc, void ** argv) {
 		
 	}else if (argc==4){
 		
-		if (strcmp(argv[1],"stock\0")==0 && (argv[2]>0) && atoi(argv[3])>0) {
+		if (strcmp(argv[1],"stock\0")==0 && (atoi(argv[2])<=total_libros && atoi(argv[3])>0) ){
 			aumentarstock(atoi(argv[2])-1,atoi(argv[3]),catalogo,&total_libros);
-		}
+		}else if (strcmp(argv[1],"stock\0")==0 && (atoi(argv[2])>	total_libros || atoi(argv[2])<0) ){
+			printf("El ID introducido no corresponde a ningún libro del catálogo\n");
+
 	}else{
 		printf("Error de sintaxis\n");
 	}
+}
 	
 
 	free(catalogo);
