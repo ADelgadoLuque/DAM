@@ -153,10 +153,12 @@ void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const cata
 	};
 };
 
-Libro anadirlibro(Libro * catalogo,int * total_libros){
-
-	catalogo=(Libro *)realloc(catalogo,sizeof(Libro)*(*total_libros+1));
+void anadirlibro(Libro ** catalogo,int * total_libros){
+	printf("%ld\n",sizeof(**catalogo));		
+	*catalogo=(Libro *)realloc(*catalogo,sizeof(Libro)*(*total_libros+1));
+	printf("%ld\n",sizeof(**catalogo));		
 	
+	Libro libro;
 	int ID=*total_libros+1;
 	char titulo[MAX_TITULO];
 	char autor[MAX_AUTOR];
@@ -176,8 +178,9 @@ Libro anadirlibro(Libro * catalogo,int * total_libros){
 	printf("Stock\n");
 	scanf("%d",&stock);
 	//Llamo a inicializarlibro para "montar el libro" con los datos recogidos
-	Libro libro=inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
-	return(libro);
+	libro=inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
+
+	*catalogo[*total_libros-1]= libro;
 }
 
 int main(int argc, void ** argv) {
@@ -306,7 +309,7 @@ int main(int argc, void ** argv) {
 		if (strcmp(argv[1],"mostrar\0")==0){
 			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
 		}else if (strcmp(argv[1],"añadir\0")==0){
-			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
+			anadirlibro(&catalogo,&total_libros);
 			mostrarlibros(catalogo,&total_libros);
 		}
 
@@ -332,10 +335,10 @@ int main(int argc, void ** argv) {
 		}else if (strcmp(argv[1],"stock\0")==0 && (atoi(argv[2])>	total_libros || atoi(argv[2])<0) ){
 			printf("El ID introducido no corresponde a ningún libro del catálogo\n");
 
-	}else{
-		printf("Error de sintaxis\n");
+		}else{
+			printf("Error de sintaxis\n");
+		}
 	}
-}
 	
 
 	free(catalogo);
