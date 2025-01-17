@@ -34,21 +34,151 @@ typedef struct{
 	genero genero;
 	int stock;
 }Libro;
-char * EnumAString(genero Genero);
-
-//FUNCIONES
-
-genero StringAEnum(char Genero[MAX_GENERO]);
-Libro inicializarlibro(int ID,char * titulo, char * autor,float precio, genero genero,int stock,int *total_libros);
-void imprimirlibro( const Libro * const catalogo); 
-void mostrarlibros(const Libro * const catalogo,const int * const total_libros);
-void mostrarlibroid(int ID_Libro,const Libro * const catalogo,const int * const total_libros);
-void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const catalogo,int *total_libros);
-void mostrarlibroscategoria(const Libro * const catalogo,const genero Categoria_Buscar,const int * const total_libros);
-void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const catalogo,const int * const total_libros);
-void anadirlibro(Libro ** catalogo,int * total_libros);
 
 
+char * EnumAString(genero Genero){
+	switch(Genero){
+	case FICCION: return "FICCION";
+	case NO_FICCION: return "NO_FICCION";
+	case POESIA: return "POESIA";
+	case TEATRO: return "TEATRO";
+	case ENSAYO: return "ENSAYO";
+	default:return "ERROR";
+	}
+}
+genero StringAEnum(char Genero[MAX_GENERO]){
+
+	if(strcmp(Genero,"FICCION")==0) return FICCION ;
+	else if(strcmp(Genero,"NO_FICCION")==0) return NO_FICCION ;
+	else if(strcmp(Genero,"POESIA")==0) return POESIA ;
+	else if(strcmp(Genero,"TEATRO")==0) return TEATRO ;
+	else if(strcmp(Genero,"ENSAYO")==0) return ENSAYO ;
+	else return ERROR;
+}
+
+
+//Como norma general paso por referencia ya que es más eficiente en términos de memoria aunque se podría pasar por valor los parámetros en todas las funciones menos la función "aumentarstock".
+//Uso const ya que no quiero que se modifique por error ninguno de los Parámetros que recibe por referencia. Esto lo hago en todas menos en la función "aumentarstock".
+Libro inicializarlibro(int ID,char * titulo, char * autor,float precio, genero genero,int stock,int *total_libros){
+
+	Libro libro;
+
+	libro.ID=ID;
+	strcpy(libro.titulo,titulo);
+	strcpy(libro.autor,autor);
+	libro.precio=precio;
+	libro.genero=genero;
+	libro.stock=stock;
+
+	*total_libros+=1;
+	return(libro);
+}
+/*FUNCIÓN GENERAL PARA IMPRIMIR LOS DATOS DE LOS LIBROS*/
+void imprimirlibro( const Libro * const catalogo){ 
+	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %.2f \nGénero: %s \nStock: %d \n\n",(catalogo)->ID, (catalogo)->titulo, (catalogo)->autor, (catalogo)->precio, EnumAString(catalogo->genero), (catalogo)->stock);
+																								//Utilizo flechas cuando necesito llamar al contenido de partes del struct. 
+};
+/*FUNCIÓN PARA MOSTRAR TODOS LOS LIBROS*/
+
+void mostrarlibros(const Libro * const catalogo,const int * const total_libros){
+	for (int i = 0; i < *total_libros; ++i){//El bucle recorre todo el Array de libros y los imprime.
+		imprimirlibro(&catalogo[i]);
+	};
+};
+
+/*FUNCIÓN PARA MOSTRAR EL LIBRO CORRESPONDIENTE CON EL ID INTRODUCIDO*/
+
+//En el caso de ID_Libro no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
+void mostrarlibroid(int ID_Libro,const Libro * const catalogo,const int * const total_libros){
+	if ((ID_Libro<0)|(ID_Libro>=*total_libros))//Compruebo que el id a buscar está dentro del máximo de libros
+	{
+		printf("Error\n");//si no lo está o se escribe algun carácter no numérico muestra error
+	}else{
+		imprimirlibro(&catalogo[ID_Libro]);//en este caso se imprime el libro correspondiente al ID introducido ya que no hay bucle como en el resto de los casos
+	};
+};
+/*FUNCIÓN PARA AUMENTAR EL STOCK DE UN LIBRO*/
+
+//En esta función es necesario pasar por referencia los datos esto debido a que si lo paso por valor la modificación no se aplica al array original. 
+//También es necesario no usar const ya que vamos a modificar el stock del libro. 
+//En el caso de ID_Libro y AumentarStock no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
+void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const catalogo,int *total_libros){
+	if ((ID_Libro<0)|(ID_Libro>=*total_libros)){//Compruebo que el id a buscar NO está dentro del máximo de libros
+
+		printf("Error\n");//Si no lo está o se escribe algun carácter no numérico muestra error
+	}else{
+
+		printf("Stock previo: %d \n",(catalogo+ID_Libro)->stock);
+
+	catalogo[ID_Libro].stock+=AumentarStock;//Se aumenta el stock del libro correspondiente al id introducido por la cantidad introducida
+	
+	printf("Stock actualizado: %d \n",(catalogo+ID_Libro)->stock);
+	mostrarlibroid(ID_Libro,catalogo,total_libros);
+};
+};
+
+/*MOSTRAR TODOS LOS LIBROS DE UNA CATEGORÍA*/
+void mostrarlibroscategoria(const Libro * const catalogo,const genero Categoria_Buscar,const int * const total_libros){
+	for (int i = 0; i < *total_libros; ++i){
+		if (catalogo[i].genero==Categoria_Buscar)
+		{
+			imprimirlibro(&catalogo[i]);
+		}
+	};
+	
+};
+
+/*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
+
+void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const catalogo,const int * const total_libros){
+	/*Se compara el autor introducido con el string autor de cada libro, Se empieza con una comparación normal. Si son iguales imprime los datos del libro.
+	 En caso contrario se vuelve a comparar pero esta vez el string del autor del libro que toque inicia un caracter después que en el anterior. 
+	 Este ciclo se repite hasta que los strings coinciden o acaba el string*/
+	int AutorOK;
+	for (int i = 0; i < *total_libros; ++i){
+		AutorOK=0;
+		for (int j = 0; j < (MAX_AUTOR-(strlen(Autor_Buscar)-1)); ++j){
+
+			if (strncmp(Autor_Buscar,catalogo[i].autor+j,(strlen(Autor_Buscar)-1))==0){ 
+				AutorOK=1;
+				break;
+			};
+		};
+		if (AutorOK==1){		
+			imprimirlibro(&catalogo[i]);
+
+		};
+
+
+	};
+};
+
+Libro anadirlibro(Libro * catalogo,int * total_libros){
+
+	catalogo=(Libro *)realloc(catalogo,sizeof(Libro)*(*total_libros+1));
+	
+	int ID=*total_libros+1;
+	char titulo[MAX_TITULO];
+	char autor[MAX_AUTOR];
+	float precio;
+	int stock;
+	char categoria[MAX_GENERO];
+
+	//Recojo los datos que componen el libro
+	printf("Título\n");
+	fgets(titulo,MAX_TITULO,stdin);
+	printf("Autor\n");
+	fgets(autor,MAX_AUTOR,stdin);
+	printf("Precio\n");
+	scanf("%f",&precio);
+	printf("Categoría\n");
+	scanf("%s",categoria);
+	printf("Stock\n");
+	scanf("%d",&stock);
+	//Llamo a inicializarlibro para "montar el libro" con los datos recogidos
+	Libro libro=inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
+	return(libro);
+}
 
 int main(int argc, void ** argv) {
 
@@ -176,7 +306,7 @@ int main(int argc, void ** argv) {
 		if (strcmp(argv[1],"mostrar\0")==0){
 			mostrarlibros(catalogo,&total_libros); //IMPRIMIR TODOS LOS LIBROS
 		}else if (strcmp(argv[1],"añadir\0")==0){
-			anadirlibro(&catalogo,&total_libros);
+			catalogo[total_libros]=anadirlibro(catalogo,&total_libros);
 			mostrarlibros(catalogo,&total_libros);
 		}
 
@@ -202,158 +332,12 @@ int main(int argc, void ** argv) {
 		}else if (strcmp(argv[1],"stock\0")==0 && (atoi(argv[2])>	total_libros || atoi(argv[2])<0) ){
 			printf("El ID introducido no corresponde a ningún libro del catálogo\n");
 
-		}else{
-			printf("Error de sintaxis\n");
-		}
+	}else{
+		printf("Error de sintaxis\n");
 	}
+}
 	
 
 	free(catalogo);
 	return 0;
-}
-
-
-
-
-char * EnumAString(genero Genero){
-	switch(Genero){
-	case FICCION: return "FICCION";
-	case NO_FICCION: return "NO_FICCION";
-	case POESIA: return "POESIA";
-	case TEATRO: return "TEATRO";
-	case ENSAYO: return "ENSAYO";
-	default:return "ERROR";
-	}
-}
-genero StringAEnum(char Genero[MAX_GENERO]){
-
-	if(strcmp(Genero,"FICCION")==0) return FICCION ;
-	else if(strcmp(Genero,"NO_FICCION")==0) return NO_FICCION ;
-	else if(strcmp(Genero,"POESIA")==0) return POESIA ;
-	else if(strcmp(Genero,"TEATRO")==0) return TEATRO ;
-	else if(strcmp(Genero,"ENSAYO")==0) return ENSAYO ;
-	else return ERROR;
-}
-
-
-//Como norma general paso por referencia ya que es más eficiente en términos de memoria aunque se podría pasar por valor los parámetros en todas las funciones menos la función "aumentarstock".
-//Uso const ya que no quiero que se modifique por error ninguno de los Parámetros que recibe por referencia. Esto lo hago en todas menos en la función "aumentarstock".
-Libro inicializarlibro(int ID,char * titulo, char * autor,float precio, genero genero,int stock,int *total_libros){
-
-	Libro libro;
-
-	libro.ID=ID;
-	strcpy(libro.titulo,titulo);
-	strcpy(libro.autor,autor);
-	libro.precio=precio;
-	libro.genero=genero;
-	libro.stock=stock;
-
-	*total_libros+=1;
-	return(libro);
-}
-/*FUNCIÓN GENERAL PARA IMPRIMIR LOS DATOS DE LOS LIBROS*/
-void imprimirlibro( const Libro * const catalogo){ 
-	printf("ID: %d \nTítulo: %s \nAutor/es:  %s \nPrecio: %.2f \nGénero: %s \nStock: %d \n\n",(catalogo)->ID, (catalogo)->titulo, (catalogo)->autor, (catalogo)->precio, EnumAString(catalogo->genero), (catalogo)->stock);
-																								//Utilizo flechas cuando necesito llamar al contenido de partes del struct. 
-};
-/*FUNCIÓN PARA MOSTRAR TODOS LOS LIBROS*/
-
-void mostrarlibros(const Libro * const catalogo,const int * const total_libros){
-	for (int i = 0; i < *total_libros; ++i){//El bucle recorre todo el Array de libros y los imprime.
-		imprimirlibro(&catalogo[i]);
-	};
-};
-
-/*FUNCIÓN PARA MOSTRAR EL LIBRO CORRESPONDIENTE CON EL ID INTRODUCIDO*/
-
-//En el caso de ID_Libro no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
-void mostrarlibroid(int ID_Libro,const Libro * const catalogo,const int * const total_libros){
-	if ((ID_Libro<0)|(ID_Libro>=*total_libros))//Compruebo que el id a buscar está dentro del máximo de libros
-	{
-		printf("Error\n");//si no lo está o se escribe algun carácter no numérico muestra error
-	}else{
-		imprimirlibro(&catalogo[ID_Libro]);//en este caso se imprime el libro correspondiente al ID introducido ya que no hay bucle como en el resto de los casos
-	};
-};
-/*FUNCIÓN PARA AUMENTAR EL STOCK DE UN LIBRO*/
-
-//En esta función es necesario pasar por referencia los datos esto debido a que si lo paso por valor la modificación no se aplica al array original. 
-//También es necesario no usar const ya que vamos a modificar el stock del libro. 
-//En el caso de ID_Libro y AumentarStock no me preocupa ya que es una variable que contiene un entero así que la paso por valor en ver de referencia para evitar posibles problemas
-void aumentarstock(int ID_Libro,int AumentarStock,  Libro * const catalogo,int *total_libros){
-	if ((ID_Libro<0)|(ID_Libro>=*total_libros)){//Compruebo que el id a buscar NO está dentro del máximo de libros
-
-		printf("Error\n");//Si no lo está o se escribe algun carácter no numérico muestra error
-	}else{
-
-		printf("Stock previo: %d \n",(catalogo+ID_Libro)->stock);
-
-	catalogo[ID_Libro].stock+=AumentarStock;//Se aumenta el stock del libro correspondiente al id introducido por la cantidad introducida
-	
-	printf("Stock actualizado: %d \n",(catalogo+ID_Libro)->stock);
-	mostrarlibroid(ID_Libro,catalogo,total_libros);
-};
-};
-
-/*MOSTRAR TODOS LOS LIBROS DE UNA CATEGORÍA*/
-void mostrarlibroscategoria(const Libro * const catalogo,const genero Categoria_Buscar,const int * const total_libros){
-	for (int i = 0; i < *total_libros; ++i){
-		if (catalogo[i].genero==Categoria_Buscar)
-		{
-			imprimirlibro(&catalogo[i]);
-		}
-	};
-	
-};
-
-/*MOSTRAR TODOS LOS LIBROS DE UN AUTOR*/
-
-void mostrarlibrosautor(const char * const Autor_Buscar,const Libro * const catalogo,const int * const total_libros){
-	/*Se compara el autor introducido con el string autor de cada libro, Se empieza con una comparación normal. Si son iguales imprime los datos del libro.
-	 En caso contrario se vuelve a comparar pero esta vez el string del autor del libro que toque inicia un caracter después que en el anterior. 
-	 Este ciclo se repite hasta que los strings coinciden o acaba el string*/
-	int AutorOK;
-	for (int i = 0; i < *total_libros; ++i){
-		AutorOK=0;
-		for (int j = 0; j < (MAX_AUTOR-(strlen(Autor_Buscar)-1)); ++j){
-
-			if (strncmp(Autor_Buscar,catalogo[i].autor+j,(strlen(Autor_Buscar)-1))==0){ 
-				AutorOK=1;
-				break;
-			};
-		};
-		if (AutorOK==1){		
-			imprimirlibro(&catalogo[i]);
-
-		};
-
-
-	};
-};
-
-void anadirlibro(Libro ** catalogo,int * total_libros){
-	*catalogo=(Libro *)realloc(*catalogo,sizeof(Libro)*(*total_libros+1));
-	
-	int ID=*total_libros+1;
-	char titulo[MAX_TITULO];
-	char autor[MAX_AUTOR];
-	float precio;
-	int stock;
-	char categoria[MAX_GENERO];
-
-	//Recojo los datos que componen el libro
-	printf("Título\n");
-	fgets(titulo,MAX_TITULO,stdin);
-	printf("Autor\n");
-	fgets(autor,MAX_AUTOR,stdin);
-	printf("Precio\n");
-	scanf("%f",&precio);
-	printf("Categoría\n");
-	scanf("%s",categoria);
-	printf("Stock\n");
-	scanf("%d",&stock);
-	//Llamo a inicializarlibro para "montar el libro" con los datos recogidos
-	*catalogo[*total_libros-1]=	inicializarlibro(ID,titulo,autor,precio,StringAEnum(categoria),stock,total_libros);
-
 }
