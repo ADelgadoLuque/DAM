@@ -30,7 +30,7 @@ if (arr == NULL)
  {
  	free(arr);
  	printf("Error fatal: Memoria insuficiente para redimensionar\n");
- 	return 1;
+ 	return;
  }
 
  arr[3]=7;
